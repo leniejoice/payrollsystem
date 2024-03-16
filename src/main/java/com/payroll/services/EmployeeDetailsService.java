@@ -34,7 +34,7 @@ public class EmployeeDetailsService {
     public EmployeeDetails getByEmpID(int empID){
         EmployeeDetails employeeDetails = null ;
             if (connection != null) {
-            String Query = "SELECT * FROM payroll.employee where employee_id = ?";
+            String Query = "SELECT * FROM employee where employee_id = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setInt(1,empID);
@@ -54,7 +54,7 @@ public class EmployeeDetailsService {
     public EmployeeDetails getByEmpPhilHealthID(long empPhilHealthID){
         EmployeeDetails employeeDetails = null ;
             if (connection != null) {
-            String Query = "SELECT * FROM payroll.employee where philhealth = ?";
+            String Query = "SELECT * FROM employee where philhealth = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setLong(1,empPhilHealthID);
@@ -74,7 +74,7 @@ public class EmployeeDetailsService {
     public EmployeeDetails getByEmpSSS(String empSSS){
         EmployeeDetails employeeDetails = null ;
             if (connection != null) {
-            String Query = "SELECT * FROM payroll.employee where sss = ?";
+            String Query = "SELECT * FROM employee where sss = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setString(1,empSSS);
@@ -94,7 +94,7 @@ public class EmployeeDetailsService {
     public EmployeeDetails getByEmpTIN(String empTIN){
         EmployeeDetails employeeDetails = null ;
             if (connection != null) {
-            String Query = "SELECT * FROM payroll.employee where tin = ?";
+            String Query = "SELECT * FROM employee where tin = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setString(1,empTIN);
@@ -114,7 +114,7 @@ public class EmployeeDetailsService {
         public EmployeeDetails getByEmpPagIbig(long empPagIbig){
         EmployeeDetails employeeDetails = null ;
             if (connection != null) {
-            String Query = "SELECT * FROM payroll.employee where pag_ibig = ?";
+            String Query = "SELECT * FROM employee where pag_ibig = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setLong(1,empPagIbig);
@@ -134,7 +134,7 @@ public class EmployeeDetailsService {
     public List<EmployeeHours> getEmpHoursByEmpID(int empID){
         List<EmployeeHours> empHours = new ArrayList<>();
         if (connection != null) {
-            String Query = "SELECT * FROM payroll.employee_hours where employee_id = ?";
+            String Query = "SELECT * FROM employee_hours where employee_id = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setInt(1,empID);

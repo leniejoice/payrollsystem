@@ -16,6 +16,9 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="33" red="33" type="rgb"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -167,6 +170,9 @@
       </Events>
     </Component>
     <Component class="javax.swing.JPasswordField" name="jpassword">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jpasswordActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="jcshow_password">
       <Properties>

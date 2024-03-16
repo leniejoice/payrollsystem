@@ -20,11 +20,11 @@ public class PayrollUtils {
     
     public float  calculateSssContribution(int empID) {
     String employeeSalaryQuery = """
-            select basic_salary from payroll.employee
+            select basic_salary from employee
             where "employee_id" = ?;
             """;
     String sssContributionQuery = """
-            select contribution from payroll.sss
+            select contribution from sss
             where (cr_above is null or ? > cr_above)
             and (cr_below is null or ? < cr_below)  
             """;

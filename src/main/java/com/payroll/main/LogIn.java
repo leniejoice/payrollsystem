@@ -5,6 +5,10 @@
 package com.payroll.main;
 
 import javax.swing.JOptionPane;
+import com.payroll.main.Dashboard;
+import javax.swing.JOptionPane;
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -48,6 +52,7 @@ public class LogIn extends javax.swing.JFrame {
         });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(51, 51, 255));
 
         jLabel1.setFont(new java.awt.Font("Century Gothic", 1, 48)); // NOI18N
         jLabel1.setText("MOTOR PH");
@@ -80,6 +85,12 @@ public class LogIn extends javax.swing.JFrame {
         bexit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bexitActionPerformed(evt);
+            }
+        });
+
+        jpassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jpasswordActionPerformed(evt);
             }
         });
 
@@ -165,6 +176,10 @@ public class LogIn extends javax.swing.JFrame {
         }
         else if(jtuser.getText().contains("leniejoice") && jpassword.getText().contains("12345678")){
             JOptionPane.showMessageDialog(null, "Login Successfull");
+            systemExit();
+            Dashboard Info = new Dashboard ();
+            Info.setVisible (true);
+            
         }
         else{
             JOptionPane.showMessageDialog(null, "Wrong username or password!!!","Message", JOptionPane.ERROR_MESSAGE);
@@ -190,6 +205,10 @@ public class LogIn extends javax.swing.JFrame {
                     
         }
     }//GEN-LAST:event_jcshow_passwordActionPerformed
+
+    private void jpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jpasswordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -238,4 +257,10 @@ public class LogIn extends javax.swing.JFrame {
     private javax.swing.JPasswordField jpassword;
     private javax.swing.JTextField jtuser;
     // End of variables declaration//GEN-END:variables
+
+    private void systemExit()
+    {
+    WindowEvent winCloseing = new WindowEvent(this,WindowEvent.WINDOW_CLOSING);
+    }
+
 }
