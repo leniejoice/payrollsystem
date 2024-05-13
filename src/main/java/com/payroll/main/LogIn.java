@@ -16,6 +16,10 @@ import java.awt.event.WindowEvent;
  */
 public class LogIn extends javax.swing.JFrame {
 
+    static void visible(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     /**
      * Creates new form LogIn
      */

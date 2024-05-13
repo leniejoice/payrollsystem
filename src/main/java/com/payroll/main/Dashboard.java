@@ -4,18 +4,227 @@
  */
 package com.payroll.main;
 
+import com.payroll.domain.EmployeeDetails;
+import com.payroll.domain.EmployeeHours;
+import com.payroll.services.EmployeeDetailsService;
+import com.payroll.util.DatabaseConnection;
+import com.payroll.util.PayrollUtils;
+import java.awt.Color;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import static java.util.Map.entry;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author Computer
  */
 public class Dashboard extends javax.swing.JFrame {
-
+    private DatabaseConnection dbConnection;
+    private EmployeeDetailsService empService;
+    private PayrollUtils payrollUtils;
     /**
      * Creates new form Dashboard
      */
-    public Dashboard() {
+    public Dashboard() {  
+        initializeDBConnection();
         initComponents();
     }
+    private void initializeDBConnection() {
+        dbConnection = new DatabaseConnection();
+        dbConnection.connect(); // Establish the database connection
+        empService = new EmployeeDetailsService(dbConnection); // Initialize services with the db connection
+        payrollUtils = new PayrollUtils(dbConnection);
+    }
+  private void showDatesOfWeekInTable(int empID, int weekOfYear, int year) {
+    DefaultTableModel model = (DefaultTableModel) showDatesOfWeekInTable.getModel();
+    model.setRowCount(0);
+
+    Calendar calendar = Calendar.getInstance();
+    calendar.clear();
+    calendar.set(Calendar.YEAR, year);
+    calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
+    calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    // Start of the week
+    String startDate = dateFormat.format(calendar.getTime());
+
+    // Move to the end of the week, Friday
+    calendar.add(Calendar.DATE, 4);
+    String endDate = dateFormat.format(calendar.getTime());
+
+    // Ensure proper casting in the SQL query
+    String query = "SELECT date, time_in, time_out FROM employee_hours WHERE employee_id = ? AND date >= CAST(? AS DATE) AND date <= CAST(? AS DATE) AND EXTRACT(DOW FROM date) BETWEEN 1 AND 5";
+
+    try {
+        PreparedStatement statement = dbConnection.getConnection().prepareStatement(query);
+        statement.setInt(1, empID);
+        statement.setString(2, startDate);
+        statement.setString(3, endDate);
+
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            Date date = resultSet.getDate("date");
+            Timestamp timeInTimestamp = resultSet.getTimestamp("time_in");
+            Timestamp timeOutTimestamp = resultSet.getTimestamp("time_out");
+
+            LocalTime timeIn = (timeInTimestamp != null) ? timeInTimestamp.toLocalDateTime().toLocalTime() : null;
+            LocalTime timeOut = (timeOutTimestamp != null) ? timeOutTimestamp.toLocalDateTime().toLocalTime() : null;
+
+            String dateStr = dateFormat.format(date);
+            String timeInStr = (timeIn != null) ? timeIn.format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A";
+            String timeOutStr = (timeOut != null) ? timeOut.format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A";
+
+            if (!("00:00".equals(timeInStr) && "00:00".equals(timeOutStr))) {
+                model.addRow(new Object[]{dateStr, timeInStr, timeOutStr});
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Handle database errors appropriately
+    }
+}
+    
+    private void calculatePayrollForWeek(int empID, int weekOfYear) {
+    EmployeeDetails employeeDetails = empService.getByEmpID(empID);
+    if (employeeDetails == null) {
+        JOptionPane.showMessageDialog(this, "Employee not found", "Search Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Assuming totalHoursMap is populated from a data source, such as a database
+    Map<Integer, Duration> totalHoursMap = fetchTotalHoursMapForEmployee(empID); // You need to implement this method
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+    // Check if the weekOfYear has hours worked
+    if (totalHoursMap.containsKey(weekOfYear) && totalHoursMap.get(weekOfYear).toHours() > 0) {
+        
+        Calendar startOfWeek = Calendar.getInstance();
+        startOfWeek.set(Calendar.YEAR, 2022); // Consider making the year dynamic or based on current year
+        startOfWeek.set(Calendar.WEEK_OF_YEAR, weekOfYear);
+        startOfWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        
+        Calendar endOfWeek = (Calendar) startOfWeek.clone();
+        endOfWeek.add(Calendar.DAY_OF_YEAR, 4); // Assuming a workweek from Monday to Friday
+        
+        Duration hoursWorked = totalHoursMap.get(weekOfYear);
+        long hours = hoursWorked.toHours();
+        double hourlyRateValue = employeeDetails.getEmpHourlyRate();
+        double weeklySalaryValue = hourlyRateValue * hoursWorked.toHours();
+        
+        double sssContributionValue = payrollUtils.calculateSssContribution(empID)/4;
+        double philHealthContributionValue = payrollUtils.calculatePhilHealthContribution(employeeDetails.getEmpBasicSalary())/8;
+        double pagibigContributionValue = payrollUtils.calculatePagibigContribution(employeeDetails.getEmpBasicSalary())/4;
+        double withholdingTaxValue = payrollUtils.calculateWithholdingTax(employeeDetails.getEmpBasicSalary())/4;
+        double totalContributionsValue = sssContributionValue + philHealthContributionValue + pagibigContributionValue;
+        double taxableIncomeValue = employeeDetails.getEmpBasicSalary() - totalContributionsValue;
+
+        double totalDeductionsValue = totalContributionsValue + withholdingTaxValue;
+        double netPayValue = weeklySalaryValue - totalDeductionsValue;
+
+        // Display or use the calculated values in your GUI components
+        // Example: Setting values to JTextField components in the GUI
+            totalHoursWorked.setText(String.format("%d", hours));
+            hourlyRate.setText(String.format("%.2f", hourlyRateValue));
+            weekSalary.setText(String.format("%.2f", weeklySalaryValue));
+            sss.setText(String.format("%.2f", sssContributionValue));
+            philhealth.setText(String.format("%.2f", philHealthContributionValue));
+            pagibig.setText(String.format("%.2f", pagibigContributionValue));
+            tax.setText(String.format("%.2f", withholdingTaxValue/4));
+            totalDeductions.setText(String.format("%.2f", totalDeductionsValue));
+            netPay.setText(String.format("%.2f", netPayValue));
+        // Add more GUI component updates as needed
+
+    } else {
+        JOptionPane.showMessageDialog(this, "Week not found or no hours worked", "Search Error", JOptionPane.ERROR_MESSAGE);
+            totalHoursWorked.setText("");
+            hourlyRate.setText("");
+            weekSalary.setText("");
+            totalDeductions.setText("");
+            sss.setText("");
+            philhealth.setText("");
+            pagibig.setText("");
+            tax.setText("");
+            netPay.setText("");
+    }
+}
+
+// This is a placeholder. You need to implement fetching logic based on your application's data source.
+private Map<Integer, Duration> fetchTotalHoursMapForEmployee(int empID) {
+    Map<Integer, Duration> totalHoursMap = new HashMap<>();
+    Calendar cal = Calendar.getInstance();
+    List<EmployeeHours> employeeHoursList = empService.getEmpHoursByEmpID(empID);
+
+    for (EmployeeHours e : employeeHoursList) {
+        cal.setTime(e.getDate());
+        int week = cal.get(Calendar.WEEK_OF_YEAR);
+        
+        LocalTime fixedInTime = LocalTime.of(8, 10);
+        LocalTime lunchStart = LocalTime.of(12, 0);
+        LocalTime lunchEnd = LocalTime.of(13, 0);
+        LocalTime inTime = e.getTimeIn();
+        LocalTime outTime = e.getTimeOut();
+
+        if (inTime != null && outTime != null && !inTime.equals(LocalTime.MIDNIGHT)) {
+            // Calculate lunch break duration and hours worked considering lunch break
+            Duration lunchBreak = Duration.between(lunchStart, lunchEnd);
+            Duration hoursWorked = Duration.between(inTime, outTime).minus(lunchBreak);
+
+            // Calculate late coming period, if any
+            Duration latePeriod = Duration.between(fixedInTime, inTime);
+            if (latePeriod.toMinutes() > 0) {
+                System.out.println("Date: " + e.getDate() + " " + latePeriod.toMinutes() + " minutes late");
+            }
+
+            // Accumulate total hours for each week
+            totalHoursMap.merge(week, hoursWorked, Duration::plus);
+        }
+    }
+
+    // Assuming you want to set the year dynamically based on the date obtained from EmployeeHours
+    int year = cal.get(Calendar.YEAR);
+    
+    // Display total hours for each week
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+    for (Map.Entry<Integer, Duration> entry : totalHoursMap.entrySet()) {
+        if (entry.getValue().toHours() > 0) {
+            
+            
+         
+            Calendar startOfWeek = Calendar.getInstance();
+            startOfWeek.set(Calendar.YEAR, year); // Set the year dynamically
+            startOfWeek.set(Calendar.WEEK_OF_YEAR, entry.getKey());
+            startOfWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            
+          
+            // The following line could be used for debugging purposes
+            //System.out.println("Week of " + dateFormat.format(startOfWeek.getTime()) + ": " + entry.getValue().toHours() + " hours worked.");
+        }
+    }
+    
+    return totalHoursMap;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,62 +236,64 @@ public class Dashboard extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        searchTextField = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        lastNameLabel = new javax.swing.JLabel();
+        firstNameLabel = new javax.swing.JLabel();
+        birthDateLabel = new javax.swing.JLabel();
+        firstName = new javax.swing.JTextField();
+        lastName = new javax.swing.JTextField();
+        birthDate = new javax.swing.JTextField();
+        weekLabel = new javax.swing.JLabel();
+        datesWeek = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        totalDeductionsLabel = new javax.swing.JLabel();
+        hourlyRate = new javax.swing.JTextField();
+        totalHoursWorked = new javax.swing.JTextField();
+        totalDeductions = new javax.swing.JTextField();
+        totalHoursWorkedLabel = new javax.swing.JLabel();
+        hourlyRateLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jLabel13 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
-        jTextField10 = new javax.swing.JTextField();
-        jTextField11 = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jTextField12 = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
-        jTextField13 = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
-        jTextField14 = new javax.swing.JTextField();
-        jLabel20 = new javax.swing.JLabel();
-        jTextField15 = new javax.swing.JTextField();
-        jLabel21 = new javax.swing.JLabel();
-        jTextField16 = new javax.swing.JTextField();
+        showDatesOfWeekInTable = new javax.swing.JTable();
+        deductionsLabel = new javax.swing.JLabel();
+        philhealth = new javax.swing.JTextField();
+        sss = new javax.swing.JTextField();
+        pagibig = new javax.swing.JTextField();
+        sssLabel = new javax.swing.JLabel();
+        philhealthLabel = new javax.swing.JLabel();
+        pagibigLabel = new javax.swing.JLabel();
+        taxLabel = new javax.swing.JLabel();
+        tax = new javax.swing.JTextField();
+        netPayLabel = new javax.swing.JLabel();
+        netPay = new javax.swing.JTextField();
+        weekSalaryLabel = new javax.swing.JLabel();
+        weekSalary = new javax.swing.JTextField();
+        addressLabel = new javax.swing.JLabel();
+        address = new javax.swing.JTextField();
+        phoneNumberLabel = new javax.swing.JLabel();
+        phoneNumber = new javax.swing.JTextField();
+        weekSelector = new javax.swing.JButton();
+        logoutButton = new javax.swing.JButton();
+        weekRange = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         jLabel1.setText("MotorPH Payroll System");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        searchTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                searchTextFieldActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Search");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        searchButton.setText("Search");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                searchButtonActionPerformed(evt);
             }
         });
 
@@ -92,46 +303,39 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel3.setText("EMPLOYEE DETAILS");
 
-        jLabel4.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel4.setText("Last Name:");
+        lastNameLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        lastNameLabel.setText("Last Name:");
 
-        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel5.setText("First Name:");
+        firstNameLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        firstNameLabel.setText("First Name:");
 
-        jLabel6.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel6.setText("Birthday:");
+        birthDateLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        birthDateLabel.setText("Birthday:");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        firstName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                firstNameActionPerformed(evt);
             }
         });
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        lastName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                lastNameActionPerformed(evt);
             }
         });
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        birthDate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                birthDateActionPerformed(evt);
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
-        jLabel7.setText("WEEK");
+        weekLabel.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        weekLabel.setText("WEEK");
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+        datesWeek.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
-            }
-        });
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                datesWeekActionPerformed(evt);
             }
         });
 
@@ -140,118 +344,144 @@ public class Dashboard extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
 
-        jLabel10.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel10.setText("Total Deductions:");
+        totalDeductionsLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        totalDeductionsLabel.setText("Total Deductions:");
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+        hourlyRate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
+                hourlyRateActionPerformed(evt);
             }
         });
 
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
+        totalHoursWorked.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
+                totalHoursWorkedActionPerformed(evt);
             }
         });
 
-        jTextField8.addActionListener(new java.awt.event.ActionListener() {
+        totalDeductions.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField8ActionPerformed(evt);
+                totalDeductionsActionPerformed(evt);
             }
         });
 
-        jLabel11.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel11.setText("Total Hours Worked:");
+        totalHoursWorkedLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        totalHoursWorkedLabel.setText("Total Hours Worked:");
 
-        jLabel12.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel12.setText("Hourly Rate:");
+        hourlyRateLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        hourlyRateLabel.setText("Hourly Rate:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        showDatesOfWeekInTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Date", "Time-in", "Time-out"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(showDatesOfWeekInTable);
 
-        jLabel13.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
-        jLabel13.setText("DEDUCTIONS");
+        deductionsLabel.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        deductionsLabel.setText("DEDUCTIONS");
 
-        jTextField9.addActionListener(new java.awt.event.ActionListener() {
+        philhealth.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField9ActionPerformed(evt);
+                philhealthActionPerformed(evt);
             }
         });
 
-        jTextField10.addActionListener(new java.awt.event.ActionListener() {
+        sss.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField10ActionPerformed(evt);
+                sssActionPerformed(evt);
             }
         });
 
-        jTextField11.addActionListener(new java.awt.event.ActionListener() {
+        pagibig.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField11ActionPerformed(evt);
+                pagibigActionPerformed(evt);
             }
         });
 
-        jLabel14.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel14.setText("SSS Contribution:");
+        sssLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        sssLabel.setText("SSS Contribution:");
 
-        jLabel15.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel15.setText("Philhealth Contribution:");
+        philhealthLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        philhealthLabel.setText("Philhealth Contribution:");
 
-        jLabel16.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel16.setText("PAG-IBIG Contribution:");
+        pagibigLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        pagibigLabel.setText("PAG-IBIG Contribution:");
 
-        jLabel17.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel17.setText("Withholding Tax:");
+        taxLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        taxLabel.setText("Withholding Tax:");
 
-        jTextField12.addActionListener(new java.awt.event.ActionListener() {
+        tax.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField12ActionPerformed(evt);
+                taxActionPerformed(evt);
             }
         });
 
-        jLabel18.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
-        jLabel18.setText("NET PAY:");
+        netPayLabel.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        netPayLabel.setText("NET SALARY:");
 
-        jTextField13.addActionListener(new java.awt.event.ActionListener() {
+        netPay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField13ActionPerformed(evt);
+                netPayActionPerformed(evt);
             }
         });
 
-        jLabel19.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel19.setText("Salary for the Week:");
+        weekSalaryLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        weekSalaryLabel.setText("Salary for the Week:");
 
-        jTextField14.addActionListener(new java.awt.event.ActionListener() {
+        weekSalary.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField14ActionPerformed(evt);
+                weekSalaryActionPerformed(evt);
             }
         });
 
-        jLabel20.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel20.setText("Address:");
+        addressLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        addressLabel.setText("Address:");
 
-        jTextField15.addActionListener(new java.awt.event.ActionListener() {
+        address.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField15ActionPerformed(evt);
+                addressActionPerformed(evt);
             }
         });
 
-        jLabel21.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel21.setText("Phone number:");
+        phoneNumberLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        phoneNumberLabel.setText("Phone no.:");
 
-        jTextField16.addActionListener(new java.awt.event.ActionListener() {
+        phoneNumber.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField16ActionPerformed(evt);
+                phoneNumberActionPerformed(evt);
+            }
+        });
+
+        weekSelector.setText("Go");
+        weekSelector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                weekSelectorActionPerformed(evt);
+            }
+        });
+
+        logoutButton.setText("Logout");
+        logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logoutButtonMouseClicked(evt);
+            }
+        });
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
+            }
+        });
+
+        weekRange.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                weekRangeActionPerformed(evt);
             }
         });
 
@@ -262,256 +492,365 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(346, 346, 346)
                 .addComponent(jLabel1)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(logoutButton)
+                .addGap(15, 15, 15))
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(searchButton)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(jLabel5)
-                                                .addComponent(jLabel4))
-                                            .addComponent(jLabel6)
+                                                .addComponent(firstNameLabel)
+                                                .addComponent(lastNameLabel))
+                                            .addComponent(birthDateLabel))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel20)
+                                                .addGap(7, 7, 7)
+                                                .addComponent(birthDate))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(firstName)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(lastName, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(0, 0, Short.MAX_VALUE))))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(addressLabel)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jLabel9))
-                                            .addComponent(jLabel21))
-                                        .addGap(42, 42, 42)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
-                                            .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField15, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField16, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField3))))
-                                .addGap(83, 83, 83)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(phoneNumberLabel))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(phoneNumber)
+                                            .addComponent(address)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(sssLabel)
+                                        .addGap(48, 48, 48)
+                                        .addComponent(sss, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel7)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel3)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(pagibigLabel)
+                                                    .addComponent(taxLabel))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(tax, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(pagibig, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(57, 57, 57))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(philhealthLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(philhealth, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(deductionsLabel))
+                                .addGap(58, 58, 58)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(weekLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(datesWeek, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(weekSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel14)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel16)
-                                                .addComponent(jLabel15)
-                                                .addComponent(jLabel17))
-                                            .addGap(18, 18, 18)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                    .addComponent(jLabel13))
-                                .addGap(83, 83, 83)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(weekRange, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel19)
-                                            .addComponent(jLabel10)
-                                            .addComponent(jLabel18))
-                                        .addGap(36, 36, 36)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField13)
-                                            .addComponent(jTextField8)
-                                            .addComponent(jTextField14)))
+                                        .addComponent(weekSalaryLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(weekSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel11)
-                                            .addComponent(jLabel12))
-                                        .addGap(36, 36, 36)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                                            .addComponent(jTextField6))))))
-                        .addGap(58, 58, 58))))
+                                        .addComponent(hourlyRateLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(hourlyRate, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(totalHoursWorkedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(totalHoursWorked, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(netPayLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(netPay, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(totalDeductionsLabel)
+                                        .addGap(72, 72, 72)
+                                        .addComponent(totalDeductions, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(43, 43, 43))))))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(41, 41, 41)
                     .addComponent(jLabel8)
-                    .addContainerGap(734, Short.MAX_VALUE)))
+                    .addContainerGap(738, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(jLabel1)
-                .addGap(35, 35, 35)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(logoutButton))
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton)
                     .addComponent(jLabel2))
-                .addGap(20, 20, 20)
+                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(weekLabel)
+                    .addComponent(datesWeek, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(weekSelector))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(firstName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lastNameLabel))
+                        .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(firstNameLabel)
+                                    .addComponent(lastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(birthDateLabel)
+                                    .addComponent(birthDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(20, 20, 20)
                                 .addComponent(jLabel9))
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(72, 72, 72)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(addressLabel)
+                                    .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel20)
-                                    .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel21)
-                            .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(phoneNumberLabel)
+                                    .addComponent(phoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 20, Short.MAX_VALUE)
+                        .addComponent(deductionsLabel)
+                        .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel13)
+                        .addGap(6, 6, 6)
+                        .addComponent(weekRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15)
-                            .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel16)
-                            .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel19)
-                            .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(totalHoursWorked, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(totalHoursWorkedLabel))
+                        .addGap(9, 9, 9)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sssLabel)
+                    .addComponent(sss, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hourlyRateLabel)
+                    .addComponent(hourlyRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18)
-                    .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(65, Short.MAX_VALUE))
+                    .addComponent(philhealthLabel)
+                    .addComponent(philhealth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(weekSalaryLabel)
+                    .addComponent(weekSalary, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pagibigLabel)
+                    .addComponent(pagibig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalDeductionsLabel)
+                    .addComponent(totalDeductions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(taxLabel)
+                    .addComponent(tax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(netPayLabel)
+                    .addComponent(netPay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(185, 185, 185)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(450, Short.MAX_VALUE)))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
         // search text field :
-    }//GEN-LAST:event_jTextField1ActionPerformed
+         Scanner inp = new Scanner(System.in);
+        
+        System.out.print("Employee ID: ");
+            int empID = inp.nextInt();
+            EmployeeDetails employeeDetails = empService.getByEmpID(empID);
+    }//GEN-LAST:event_searchTextFieldActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // search button:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        try {
+        int empID = Integer.parseInt(searchTextField.getText().trim());
+        EmployeeDetails employeeDetails = empService.getByEmpID(empID);
+        
+        if (employeeDetails != null) {
+            lastName.setText(employeeDetails.getLastName());
+            firstName.setText(employeeDetails.getFirstName());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+            String formattedBirthday = dateFormat.format(employeeDetails.getEmpBirthday());
+            birthDate.setText(formattedBirthday);
+            address.setText(employeeDetails.getEmpAddress());
+            phoneNumber.setText(employeeDetails.getEmpPhoneNumber());
+            // You can also display other employee details in similar text fields or labels
+        } else {
+            JOptionPane.showMessageDialog(this, "Employee not found", "Search Error", JOptionPane.ERROR_MESSAGE);
+            lastName.setText("");
+            firstName.setText("");
+            birthDate.setText("");
+            address.setText("");
+            phoneNumber.setText("");
+            // Reset other fields if necessary
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Invalid ID format", "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+        
+    }//GEN-LAST:event_searchButtonActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void firstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstNameActionPerformed
         // first name:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    
+    }//GEN-LAST:event_firstNameActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void lastNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastNameActionPerformed
         // last name:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+      
+    }//GEN-LAST:event_lastNameActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void birthDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_birthDateActionPerformed
         // birthday:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_birthDateActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+    private void datesWeekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datesWeekActionPerformed
         // dates of the week
-    }//GEN-LAST:event_jTextField5ActionPerformed
+       Scanner inp = new Scanner(System.in); // Consider managing Scanner lifecycle outside this method
+        Calendar cal = Calendar.getInstance(); // Assuming cal is defined somewhere, ensure it's initialized
+        int weekOfYear = cal.get(Calendar.WEEK_OF_YEAR); 
+    }//GEN-LAST:event_datesWeekActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void hourlyRateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hourlyRateActionPerformed
         // hourly rate
-    }//GEN-LAST:event_jTextField6ActionPerformed
+    }//GEN-LAST:event_hourlyRateActionPerformed
 
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
+    private void totalHoursWorkedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalHoursWorkedActionPerformed
         // total hours worked
-    }//GEN-LAST:event_jTextField7ActionPerformed
+    }//GEN-LAST:event_totalHoursWorkedActionPerformed
 
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
+    private void totalDeductionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalDeductionsActionPerformed
+        // total deductions
+    }//GEN-LAST:event_totalDeductionsActionPerformed
+
+    private void philhealthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_philhealthActionPerformed
+        // Philhealth Contri
+    }//GEN-LAST:event_philhealthActionPerformed
+
+    private void sssActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sssActionPerformed
+        // SSS Contri
+    }//GEN-LAST:event_sssActionPerformed
+
+    private void pagibigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pagibigActionPerformed
+        // Pagibig contri
+    }//GEN-LAST:event_pagibigActionPerformed
+
+    private void taxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taxActionPerformed
+        // Withholding tax:
+    }//GEN-LAST:event_taxActionPerformed
+
+    private void netPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_netPayActionPerformed
+        // FINAL NET PAY
+    }//GEN-LAST:event_netPayActionPerformed
+
+    private void weekSalaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weekSalaryActionPerformed
         // salary for the week
-    }//GEN-LAST:event_jTextField8ActionPerformed
+    }//GEN-LAST:event_weekSalaryActionPerformed
 
-    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField9ActionPerformed
+    private void addressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressActionPerformed
+        // Address
+    }//GEN-LAST:event_addressActionPerformed
 
-    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField10ActionPerformed
+    private void phoneNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_phoneNumberActionPerformed
+        // Phone number
+    }//GEN-LAST:event_phoneNumberActionPerformed
 
-    private void jTextField11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField11ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField11ActionPerformed
+    private void weekSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weekSelectorActionPerformed
+        // GO button
+    
+        try {
+            int empID = Integer.parseInt(searchTextField.getText().trim());
+            int weekOfYear = Integer.parseInt(datesWeek.getText().trim());
 
-    private void jTextField12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField12ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField12ActionPerformed
+            // Assume the current year initially
+            int year = 2022;
 
-    private void jTextField13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField13ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField13ActionPerformed
+            // Now, pass this year value to your methods
+            showDatesOfWeekInTable(empID, weekOfYear, 2022);
+            calculatePayrollForWeek(empID, weekOfYear);
+            
+              // Calculate the start and end date of the specified week and year
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
+            calendar.set(Calendar.YEAR, 2022);
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-    private void jTextField14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField14ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField14ActionPerformed
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+            String startOfWeek = dateFormat.format(calendar.getTime());
 
-    private void jTextField15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField15ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField15ActionPerformed
+            // Move the calendar to the last day of the week (Fruday)
+            calendar.add(Calendar.DATE, 4); // Adding 4 days to get Friday
+            String endOfWeek = dateFormat.format(calendar.getTime());
+            
+            weekRange.setText("From " + startOfWeek + " to " + endOfWeek);
+            
 
-    private void jTextField16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField16ActionPerformed
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Invalid input format", "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    }//GEN-LAST:event_weekSelectorActionPerformed
+
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField16ActionPerformed
+    }//GEN-LAST:event_logoutButtonActionPerformed
+
+    private void logoutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutButtonMouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+        LogIn.visible(true);
+    }//GEN-LAST:event_logoutButtonMouseClicked
+
+    private void weekRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weekRangeActionPerformed
+        
+    }//GEN-LAST:event_weekRangeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -549,46 +888,50 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JTextField address;
+    private javax.swing.JLabel addressLabel;
+    private javax.swing.JTextField birthDate;
+    private javax.swing.JLabel birthDateLabel;
+    private javax.swing.JTextField datesWeek;
+    private javax.swing.JLabel deductionsLabel;
+    private javax.swing.JTextField firstName;
+    private javax.swing.JLabel firstNameLabel;
+    private javax.swing.JTextField hourlyRate;
+    private javax.swing.JLabel hourlyRateLabel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField15;
-    private javax.swing.JTextField jTextField16;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField lastName;
+    private javax.swing.JLabel lastNameLabel;
+    private javax.swing.JButton logoutButton;
+    private javax.swing.JTextField netPay;
+    private javax.swing.JLabel netPayLabel;
+    private javax.swing.JTextField pagibig;
+    private javax.swing.JLabel pagibigLabel;
+    private javax.swing.JTextField philhealth;
+    private javax.swing.JLabel philhealthLabel;
+    private javax.swing.JTextField phoneNumber;
+    private javax.swing.JLabel phoneNumberLabel;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchTextField;
+    private javax.swing.JTable showDatesOfWeekInTable;
+    private javax.swing.JTextField sss;
+    private javax.swing.JLabel sssLabel;
+    private javax.swing.JTextField tax;
+    private javax.swing.JLabel taxLabel;
+    private javax.swing.JTextField totalDeductions;
+    private javax.swing.JLabel totalDeductionsLabel;
+    private javax.swing.JTextField totalHoursWorked;
+    private javax.swing.JLabel totalHoursWorkedLabel;
+    private javax.swing.JLabel weekLabel;
+    private javax.swing.JTextField weekRange;
+    private javax.swing.JTextField weekSalary;
+    private javax.swing.JLabel weekSalaryLabel;
+    private javax.swing.JButton weekSelector;
     // End of variables declaration//GEN-END:variables
+
+    
 }

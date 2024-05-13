@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import com.payroll.domain.EmployeeHours;
+import java.sql.PreparedStatement;
 
 /**
  *
@@ -46,4 +47,13 @@ public class DatabaseConnection {
     }
     
 ///Database connection
+    
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            // Optionally, attempt to reconnect or throw an exception if not connected
+            connect();
+        }
+        return connection.prepareStatement(query);
+    }
+
 }

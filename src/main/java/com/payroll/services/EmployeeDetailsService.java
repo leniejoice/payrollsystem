@@ -27,9 +27,6 @@ public class EmployeeDetailsService {
         this.connection = dbConnection.getConnection();  
     }
     
-  public void printname(EmployeeDetails employee){
-        System.out.println(employee.getLastName()+" "+employee.getFirstName());
-    }
 
     public EmployeeDetails getByEmpID(int empID){
         EmployeeDetails employeeDetails = null ;

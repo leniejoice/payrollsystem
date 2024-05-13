@@ -18,5 +18,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.rpiaggio</groupId>
+            <artifactId>scalajs-react-datepicker_sjs1_2.13</artifactId>
+            <version>0.1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>
