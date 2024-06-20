@@ -312,6 +312,8 @@ private Map<Integer, Duration> fetchTotalHoursMapForEmployee(int empID) {
         birthDateLabel.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         birthDateLabel.setText("Birthday:");
 
+        firstName.setEditable(false);
+        firstName.setBorder(null);
         firstName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 firstNameActionPerformed(evt);
@@ -626,7 +628,7 @@ private Map<Integer, Duration> fetchTotalHoursMapForEmployee(int empID) {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(firstName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(firstName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lastNameLabel))
                         .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -649,7 +651,7 @@ private Map<Integer, Duration> fetchTotalHoursMapForEmployee(int empID) {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(phoneNumberLabel)
                                     .addComponent(phoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(18, 20, Short.MAX_VALUE)
+                        .addGap(18, 23, Short.MAX_VALUE)
                         .addComponent(deductionsLabel)
                         .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()

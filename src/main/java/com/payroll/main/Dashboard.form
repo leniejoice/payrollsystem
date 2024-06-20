@@ -204,7 +204,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="firstName" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="firstName" alignment="3" max="-2" attributes="0"/>
                           <Component id="lastNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
@@ -235,7 +235,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace type="separate" pref="20" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" pref="23" max="32767" attributes="0"/>
                       <Component id="deductionsLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                   </Group>
@@ -354,6 +354,12 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="firstName">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="null"/>
+        </Property>
+      </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="firstNameActionPerformed"/>
       </Events>

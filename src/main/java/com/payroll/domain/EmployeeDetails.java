@@ -4,6 +4,8 @@
  */
 package com.payroll.domain;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -22,9 +24,9 @@ public class EmployeeDetails {
     private Date empBirthday;
     private String empAddress;
     private String empPhoneNumber;
-    private String empStatus;
-    private String empPosition;
-    private int empImmediateSupervisor;
+    private EmployeeStatus empStatus;
+    private EmployeePosition empPosition;
+    private EmployeeDetails empImmediateSupervisor;
     
     //Deductions
     private String empSSS;
@@ -42,6 +44,15 @@ public class EmployeeDetails {
     //Rate
     private double empMonthlyRate;
     private double empHourlyRate;
+
+    public double getBiMonthlyRate() {
+        return biMonthlyRate;
+    }
+
+    public void setBiMonthlyRate(double biMonthlyRate) {
+        this.biMonthlyRate = biMonthlyRate;
+    }
+    private double biMonthlyRate;
             
             
     //end
@@ -53,6 +64,8 @@ public class EmployeeDetails {
     public void setEmpID(int empID) {
         this.empID = empID;
     }
+    
+
 
     public String getLastName() {
         return lastName;
@@ -126,27 +139,27 @@ public class EmployeeDetails {
         this.empPagibig = empPagibig;
     }
 
-    public String getEmpStatus() {
+    public EmployeeStatus getEmpStatus() {
         return empStatus;
     }
 
-    public void setEmpStatus(String empStatus) {
+    public void setEmpStatus(EmployeeStatus empStatus) {
         this.empStatus = empStatus;
     }
 
-    public String getEmpPosition() {
+    public EmployeePosition getEmpPosition() {
         return empPosition;
     }
 
-    public void setEmpPosition(String empPosition) {
+    public void setEmpPosition(EmployeePosition empPosition) {
         this.empPosition = empPosition;
     }
 
-    public int getEmpImmediateSupervisor() {
+    public EmployeeDetails getEmpImmediateSupervisor() {
         return empImmediateSupervisor;
     }
 
-    public void setEmpImmediateSupervisor(int empImmediateSupervisor) {
+    public void setEmpImmediateSupervisor(EmployeeDetails empImmediateSupervisor) {
         this.empImmediateSupervisor = empImmediateSupervisor;
     }
 
@@ -198,6 +211,14 @@ public class EmployeeDetails {
         this.empHourlyRate = empHourlyRate;
     }
     
+    public String getFormattedName(){
+        return (firstName+" "+lastName).trim();
+    }
+    
+    public String getFormattedBirthday(){
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return this.empBirthday != null ? formatter.format(this.empBirthday) : null;
+    }
    /* @Override 
     public String toString(){
         return "Employee ID: " + getEmpID()+"\n"+ "Employee Name: " + getFirstName()+" "+ getLastName()+"\n" +"Birthday: "+ getEmpBirthday();

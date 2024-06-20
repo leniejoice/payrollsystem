@@ -4,7 +4,7 @@
  */
 package com.payroll.util;
 import com.payroll.domain.EmployeeDetails;
-import com.payroll.main.Main;
+import com.payroll.main.MainDashboard;
 import com.payroll.services.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,6 +25,7 @@ public class DatabaseConnection {
     public boolean connect() {
         try {
             connection = DriverManager.getConnection(url, username, password);
+           // connection.setAutoCommit(true);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
