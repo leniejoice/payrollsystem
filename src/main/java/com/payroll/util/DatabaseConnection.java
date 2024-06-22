@@ -18,18 +18,17 @@ import java.sql.PreparedStatement;
  */
 public class DatabaseConnection {
     Connection connection;
-    private final String url = "jdbc:postgresql://localhost:5432/postgres"; // Modify the URL
-    private final String username = "postgres"; // Modify the username
-    private final String password = "postgres"; // Modify the password
+    private final String url = "jdbc:postgresql://localhost:5432/postgres"; // 
+    private final String username = "postgres"; 
+    private final String password = "postgres"; 
 
-    public boolean connect() {
+    public Connection connect() {
         try {
-            connection = DriverManager.getConnection(url, username, password);
-           // connection.setAutoCommit(true);
-            return true;
+            return DriverManager.getConnection(url, username, password);
+
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
     

@@ -14,7 +14,15 @@ public class EmployeeAccount {
     private String empUserName; 
     private String empPassword;
     private EmployeeDetails empDetails;
-    
+    private UserRole userRole;
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
     
     public int getAccountID() {
         return accountID;

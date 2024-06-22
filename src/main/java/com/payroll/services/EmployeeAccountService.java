@@ -6,6 +6,7 @@ package com.payroll.services;
 
 import com.payroll.domain.EmployeeAccount;
 import com.payroll.domain.EmployeeDetails;
+import com.payroll.domain.UserRole;
 import com.payroll.util.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,12 +26,15 @@ import java.util.List;
  */
 public class EmployeeAccountService {
     private Connection connection;
+    private DatabaseConnection dbConnection;
     private EmployeeDetailsService empDetailsService;
+    private EmployeeRolesService empRolesService;
     
     
     public EmployeeAccountService(DatabaseConnection dbConnection){
-        this.connection = dbConnection.getConnection();  
+        this.connection = dbConnection.connect();  
         this.empDetailsService = new EmployeeDetailsService(dbConnection);
+        this.empRolesService = new EmployeeRolesService(dbConnection);
     }
 
     public EmployeeAccountService() {
@@ -38,7 +44,7 @@ public class EmployeeAccountService {
 
     public EmployeeAccount getUserAccount(String username, String password){
         EmployeeAccount employeeAccount = null ;
-            if (connection != null) {
+        if (connection != null) {
             String Query = "SELECT * FROM employee_account where username = ? and password = ?";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query);
@@ -51,7 +57,11 @@ public class EmployeeAccountService {
                     employeeAccount.setAccountID(resultSet.getInt("account_id"));
                     employeeAccount.setEmpUserName(resultSet.getString("username"));
                     employeeAccount.setEmpPassword(resultSet.getString("password"));
-
+                    
+                    int roleID = resultSet.getInt("role_id");
+                    UserRole role = empRolesService.getByRolesId(roleID);
+                    employeeAccount.setUserRole(role);
+                    
                     int empID = resultSet.getInt("employee_id");
                     EmployeeDetails employeeDetails = empDetailsService.getByEmpID(empID);
                     employeeAccount.setEmpDetails(employeeDetails);
@@ -62,12 +72,12 @@ public class EmployeeAccountService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }        
         }                          
         return employeeAccount;
     } 
     
-     public EmployeeAccount getByEmpID(int empID){
+    public EmployeeAccount getByEmpID(int empID){
         EmployeeAccount employeeAccount = null ;
             if (connection != null) {
             String Query = "SELECT * FROM public.employee_account where employee_id = ?";
@@ -80,6 +90,10 @@ public class EmployeeAccountService {
                     employeeAccount.setAccountID(resultSet.getInt("account_id"));
                     employeeAccount.setEmpUserName(resultSet.getString("username"));
                     employeeAccount.setEmpPassword(resultSet.getString("password"));
+                    
+                    int roleID = resultSet.getInt("role_id");
+                    UserRole role = empRolesService.getByRolesId(roleID);
+                    employeeAccount.setUserRole(role);
 
                     EmployeeDetails employeeDetails = empDetailsService.getByEmpID(empID);
                     employeeAccount.setEmpDetails(employeeDetails);
@@ -89,13 +103,12 @@ public class EmployeeAccountService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }        
         }                          
         return employeeAccount;
     } 
     
     public void updateEmployeeAccount(EmployeeAccount empAccount){
-         
         if(connection !=null){
             String Query = "UPDATE public.employee_account SET username = ?, password = ? where employee_id = ?";
         
@@ -125,6 +138,10 @@ public class EmployeeAccountService {
                     employeeAccount.setAccountID(resultSet.getInt("account_id"));
                     employeeAccount.setEmpUserName(resultSet.getString("username"));
                     employeeAccount.setEmpPassword(resultSet.getString("password"));
+                    
+                    int roleID = resultSet.getInt("role_id");
+                    UserRole role = empRolesService.getByRolesId(roleID);
+                    employeeAccount.setUserRole(role);
 
                     int empID = resultSet.getInt("employee_id");
                     EmployeeDetails employeeDetails = empDetailsService.getByEmpID(empID);
@@ -135,39 +152,38 @@ public class EmployeeAccountService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }   
         }                          
         return allEmployeeAccount;
     }
    
     
-       public EmployeeDetails saveUserAccount(EmployeeAccount empAccount,EmployeeDetails empDetails){
-            if (connection != null) {
-            String Query = "INSERT into public.employee_account (employee_id, username, password) VALUES (?, ?, ?)";
+    public EmployeeDetails saveUserAccount(EmployeeAccount empAccount,EmployeeDetails empDetails){
+        if (connection != null) {
+            String Query = "INSERT into public.employee_account (employee_id, username, password,role_id) VALUES (?, ?, ?,?)";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(Query, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setInt(1,empDetails.getEmpID());                
                 preparedStatement.setString(2,empAccount.getEmpUserName());
                 preparedStatement.setString(3,empAccount.getEmpPassword());
-                
-                
+                preparedStatement.setInt(4,2);   
                 int affectedrows = preparedStatement.executeUpdate();
-                    if(affectedrows > 0){
-                     try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if(affectedrows > 0){
+                    try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
-                            empAccount.setAccountID(generatedKeys.getInt(1));
+                             empAccount.setAccountID(generatedKeys.getInt(1));
                         } else {
-                            throw new SQLException("Creating user failed, no ID obtained.");
-                         }
+                             throw new SQLException("Creating user failed, no ID obtained.");
+                        }
                     }
-            };
+                };
                 preparedStatement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
-            }          
-        }                          
-        return empDetails;
-    }
+                 e.printStackTrace();
+            }           
+         }                          
+         return empDetails;
+     }
     
     public void deleteEmpAccount(int empID){
         if (connection != null) {
@@ -181,7 +197,7 @@ public class EmployeeAccountService {
 
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }           
         }                              
     }   
        

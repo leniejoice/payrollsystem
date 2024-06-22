@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 /**
  *
@@ -148,7 +149,6 @@ public class LogIn extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(blogin, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jcshow_password)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -158,7 +158,8 @@ public class LogIn extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel4)
                                     .addGap(18, 18, 18)
-                                    .addComponent(usernameTField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(usernameTField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(blogin, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(77, 77, 77))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(signUPButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -197,7 +198,7 @@ public class LogIn extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(0, 0, 0));
 
         jLabel1.setBackground(new java.awt.Color(0, 0, 0));
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Computer\\Downloads\\cp2 icons\\motor.png")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/motor.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -244,7 +245,7 @@ public class LogIn extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void bloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bloginActionPerformed
-       String username = usernameTField.getText().trim();
+        String username = usernameTField.getText().trim();
         String password = new String(jpassword.getPassword());
 
         if (username.isEmpty() || password.isEmpty()) {
@@ -256,16 +257,15 @@ public class LogIn extends javax.swing.JFrame {
              JOptionPane.showMessageDialog(null, "Wrong username or password!", "Login Error", JOptionPane.ERROR_MESSAGE);
         } else {
              JOptionPane.showMessageDialog(null, "Login Successful");
-                    MainDashboard info = new MainDashboard(empAccount);
-                    info.setVisible(true);
-                    this.dispose();
-        }
-        
-        
-        
-
-  
-        
+             JFrame dashboard = null;
+             if("Admin".equals(empAccount.getUserRole().getRole())) {
+                dashboard = new MainDashboard(empAccount);
+             }else{
+                dashboard = new EmployeeDashboard(empAccount);  
+             }
+             dashboard.setVisible(true);
+             this.dispose();
+        }   
     }//GEN-LAST:event_bloginActionPerformed
 
     private void jpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpasswordActionPerformed

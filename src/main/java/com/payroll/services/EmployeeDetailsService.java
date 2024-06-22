@@ -34,8 +34,10 @@ import javax.swing.JOptionPane;
 public class EmployeeDetailsService {
     
     private Connection connection;
+    private DatabaseConnection dbConnection;
+    
     public EmployeeDetailsService(DatabaseConnection dbConnection){
-        this.connection = dbConnection.getConnection();  
+        this.connection = dbConnection.connect();   
     }
 
     public EmployeeDetailsService() {
@@ -46,22 +48,25 @@ public class EmployeeDetailsService {
         return getByEmpID(empID,true);
     } 
     
-      public EmployeeDetails getByEmpID(int empID, boolean fetchSupervisor){
+    public EmployeeDetails getByEmpID(int empID, boolean fetchSupervisor){
         EmployeeDetails employeeDetails = null ;
         if (connection != null) {
             String Query = "SELECT * FROM employee where employee_id = ?";
+            ResultSet resultSet = null;
+            PreparedStatement preparedStatement =null;
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement(Query);
+                preparedStatement = connection.prepareStatement(Query);
                 preparedStatement.setInt(1,empID);
-                ResultSet resultSet = preparedStatement.executeQuery();
+                resultSet = preparedStatement.executeQuery();
                 if(resultSet.next()){
                     employeeDetails = toEmployeeDetails(resultSet, fetchSupervisor);
+                    
                 }
                 resultSet.close();
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }   
         }                          
         return employeeDetails;
     } 
@@ -83,7 +88,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }        
         }                          
         return empPosition;
     }
@@ -105,7 +110,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }           
         }                          
         return empStatus;
     }
@@ -171,7 +176,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }         
         }                          
         return empDetails;
     }
@@ -221,7 +226,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }         
         }                          
         return empDetails;
     }
@@ -243,7 +248,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }
+            }  
         }
         return isDeleted;
     }
@@ -263,7 +268,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }         
         }                          
         return allEmployee;
  
@@ -286,7 +291,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }         
         }                          
         return positions;
     }
@@ -308,7 +313,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }        
         }                          
         return statuses;
     }
@@ -330,7 +335,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }         
         }                          
         return employeeDetails;
     } 
@@ -351,7 +356,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }         
         }                          
         return employeeDetails;
     } 
@@ -372,12 +377,12 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }      
         }                          
         return employeeDetails;
     } 
     
-        public EmployeeDetails getByEmpPagIbig(long empPagIbig){
+    public EmployeeDetails getByEmpPagIbig(long empPagIbig){
         EmployeeDetails employeeDetails = null ;
             if (connection != null) {
             String Query = "SELECT * FROM employee where pag_ibig = ?";
@@ -393,7 +398,7 @@ public class EmployeeDetailsService {
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }          
+            }        
         }                          
         return employeeDetails;
     } 

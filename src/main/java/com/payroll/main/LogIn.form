@@ -87,7 +87,6 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="blogin" min="-2" pref="226" max="-2" attributes="0"/>
                               <Component id="jcshow_password" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Group type="102" attributes="0">
@@ -101,6 +100,7 @@
                                       <Component id="usernameTField" min="-2" pref="226" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <Component id="blogin" alignment="1" min="-2" pref="226" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
                       </Group>
@@ -290,7 +290,7 @@
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Computer\Downloads\cp2 icons\motor.png"/>
+              <Image iconType="3" name="/icons/motor.png"/>
             </Property>
           </Properties>
         </Component>
