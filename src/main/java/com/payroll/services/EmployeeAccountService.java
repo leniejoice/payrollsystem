@@ -202,11 +202,9 @@ public class EmployeeAccountService {
     }   
        
        
-    public EmployeeAccount changePassword(String username, String password){
-        
+    public EmployeeAccount changePassword(EmployeeAccount empAccount){
+     
         return null;
-        
     }
-    
-    
+   
 }

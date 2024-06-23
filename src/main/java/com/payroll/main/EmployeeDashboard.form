@@ -57,7 +57,7 @@
         <Container class="javax.swing.JPanel" name="header">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="33" green="33" red="ff" type="rgb"/>
+              <Color blue="33" green="66" red="ff" type="rgb"/>
             </Property>
           </Properties>
 
@@ -185,7 +185,7 @@
                           <Component id="payrollButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="leaveManagementButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="574" max="32767" attributes="0"/>
+                          <EmptySpace pref="585" max="32767" attributes="0"/>
                           <Component id="jButton1" min="-2" pref="34" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -1216,11 +1216,15 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="salarySlips" min="-2" max="-2" attributes="0"/>
+                              <Component id="salarySlips" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                                   <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="68" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="77" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1229,9 +1233,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="salarySlips" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
-                              <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="171" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
+                                  <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="26" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1257,102 +1266,88 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="jScrollPane3" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
                                           <Component id="dateRangeLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="monthDropdown" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="yearDropdown" min="-2" max="-2" attributes="0"/>
+                                          <Component id="monthDropdown" min="-2" pref="189" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="yearDropdown" min="-2" pref="133" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="jScrollPane3" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" pref="78" max="-2" attributes="0"/>
+                                  <EmptySpace pref="151" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="1" attributes="0">
-                                          <Group type="102" alignment="1" attributes="0">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="salaryDetailsPayLabel" min="-2" max="-2" attributes="0"/>
-                                                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                                      <Group type="102" attributes="0">
-                                                          <Component id="basicSalaryPayLabel" min="-2" max="-2" attributes="0"/>
-                                                          <EmptySpace max="32767" attributes="0"/>
-                                                          <Component id="basicSalaryPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <Group type="102" attributes="0">
-                                                          <Component id="hourlyRatePayLabel" min="-2" max="-2" attributes="0"/>
-                                                          <EmptySpace max="32767" attributes="0"/>
-                                                          <Component id="hourlyRatePayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <Group type="102" alignment="0" attributes="0">
-                                                          <Component id="totalHoursPayLabel" min="-2" max="-2" attributes="0"/>
-                                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                          <Component id="totalHoursPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <Group type="102" alignment="0" attributes="0">
-                                                          <Component id="grossSalaryPayLabel" min="-2" max="-2" attributes="0"/>
-                                                          <EmptySpace max="32767" attributes="0"/>
-                                                          <Component id="grossSalaryPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
+                                      <Component id="pagibigContriPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="deductionsPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                                  <Group type="102" alignment="1" attributes="0">
+                                                      <Component id="hourlyRatePayLabel" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace max="32767" attributes="0"/>
+                                                      <Component id="hourlyRatePayLabelValue" min="-2" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="philhealthContriPayLabel" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="totalHoursPayLabel" min="-2" max="-2" attributes="0"/>
                                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                      <Component id="philhealthContriPayLabelValue" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="totalHoursPayLabelValue" min="-2" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
-                                              <EmptySpace pref="141" max="32767" attributes="0"/>
-                                              <Component id="phonePayLabelValue" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="sssContriPayLabel" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
-                                              <Component id="sssContriPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                                              <Component id="taxPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                              <Group type="102" attributes="0">
+                                              <Component id="salaryDetailsPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="basicSalaryPayLabel" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                                                  <Component id="basicSalaryPayLabelValue" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
                                                   <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="pagibigContriPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="taxPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="netPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="grossSalaryPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="sssContriPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="philhealthContriPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                                                   <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="pagibigContriPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="netPayLabelValue" alignment="1" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="philhealthContriPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="sssContriPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="grossSalaryPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="pagibigContriPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="totalDeductionsPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="netPayLabelValue" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="taxPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
                                           </Group>
-                                          <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
-                                              <Group type="102" attributes="0">
-                                                  <Component id="ricePayLabel" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace max="32767" attributes="0"/>
-                                                  <Component id="ricePayLabelValue" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="1" attributes="0">
-                                                  <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="allowPayLabel" min="-2" max="-2" attributes="0"/>
-                                                      <Group type="102" attributes="0">
-                                                          <Group type="103" groupAlignment="0" attributes="0">
-                                                              <Component id="clothingPayLabel" min="-2" max="-2" attributes="0"/>
-                                                              <Component id="totalAllowPayLabel" min="-2" max="-2" attributes="0"/>
-                                                          </Group>
-                                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                          <Group type="103" groupAlignment="0" attributes="0">
-                                                              <Component id="totalAllowPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                              <Component id="clothingPayLabelValue" min="-2" max="-2" attributes="0"/>
-                                                          </Group>
-                                                      </Group>
-                                                      <Component id="phonePayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="172" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="allowPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="ricePayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="phonePayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="clothingPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="totalAllowPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="1" attributes="0">
+                                                      <Component id="ricePayLabelValue" alignment="1" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="phonePayLabelValue" alignment="1" min="-2" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="totalAllowPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="clothingPayLabelValue" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
                                               </Group>
                                           </Group>
                                       </Group>
-                                      <Component id="deductionsPayLabel" min="-2" max="-2" attributes="0"/>
+                                      <Component id="totalDeductionsPayLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="netPayLabel" min="-2" max="-2" attributes="0"/>
+                                      <Component id="taxPayLabel" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" pref="164" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="127" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1360,96 +1355,89 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="dateRangeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="monthDropdown" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="yearDropdown" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="salaryDetailsPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
+                                          <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="allowPayLabel" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="salaryDetailsPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="allowPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="yearDropdown" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="totalHoursPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="totalHoursPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="ricePayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="ricePayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="hourlyRatePayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="hourlyRatePayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="phonePayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="phonePayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="basicSalaryPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="basicSalaryPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="clothingPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="clothingPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="grossSalaryPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="grossSalaryPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="totalAllowPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="totalAllowPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
                                           <Component id="deductionsPayLabel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="sssContriPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="sssContriPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="philhealthContriPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="philhealthContriPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="pagibigContriPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="pagibigContriPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="totalDeductionsPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="totalDeductionsPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="taxPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="taxPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="3" attributes="0">
                                               <Component id="netPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="netPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="3" attributes="0">
-                                              <Component id="ricePayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="ricePayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="3" attributes="0">
-                                              <Component id="phonePayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="phonePayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="3" attributes="0">
-                                              <Component id="clothingPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="clothingPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="3" attributes="0">
-                                              <Component id="totalAllowPayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="totalAllowPayLabelValue" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                          <Component id="jScrollPane3" min="-2" pref="438" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="jScrollPane3" min="-2" pref="499" max="-2" attributes="0"/>
                                   </Group>
+                                  <EmptySpace min="-2" pref="146" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1473,8 +1461,661 @@
                                     <Column editable="true" title="Total Hours" type="java.lang.Object"/>
                                   </Table>
                                 </Property>
+                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                </Property>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                        <Component class="javax.swing.JLabel" name="dateRangeLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Date Range"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JComboBox" name="monthDropdown">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="16" style="0"/>
+                            </Property>
+                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                              <StringArray count="5">
+                                <StringItem index="0" value="Select Month"/>
+                                <StringItem index="1" value="September"/>
+                                <StringItem index="2" value="October"/>
+                                <StringItem index="3" value="November"/>
+                                <StringItem index="4" value="December"/>
+                              </StringArray>
+                            </Property>
+                          </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
+                        </Component>
+                        <Component class="javax.swing.JComboBox" name="yearDropdown">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="16" style="0"/>
+                            </Property>
+                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                              <StringArray count="4">
+                                <StringItem index="0" value="Select Year"/>
+                                <StringItem index="1" value="2022"/>
+                                <StringItem index="2" value="2023"/>
+                                <StringItem index="3" value="2024"/>
+                              </StringArray>
+                            </Property>
+                          </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="salaryDetailsPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Salary Details"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="totalHoursPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Total Hours Worked:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="hourlyRatePayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Hourly Rate:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="basicSalaryPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Basic Salary:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="allowPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Allowances"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="ricePayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Rice Subsidy:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="phonePayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Phone Allow.:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="clothingPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Clothing Allow.:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="totalAllowPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Total Allowance:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="deductionsPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Deductions"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="sssContriPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="SSS Contrib:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="philhealthContriPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Philhealth Contrib:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="pagibigContriPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="PAG-IBIG Contrib:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="taxPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Withholding tax:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="netPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Net Pay:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="grossSalaryPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Gross Salary:"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="totalHoursPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel8"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="hourlyRatePayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel9"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="basicSalaryPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel10"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="grossSalaryPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel11"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="phonePayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel12"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="clothingPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel13"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="totalAllowPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel14"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="ricePayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel15"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="sssContriPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel16"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="philhealthContriPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel18"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="pagibigContriPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel19"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="taxPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel22"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="netPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel23"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="totalDeductionsPayLabel">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Total Deductions: "/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="totalDeductionsPayLabelValue">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="jLabel8"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="leaveRequest">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e5" green="e5" red="e5" type="rgb"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+                      <CardConstraints cardName="card6"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel29" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jPanel12" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jPanel2" max="32767" attributes="0"/>
+                                  <Component id="jPanel12" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Container class="javax.swing.JPanel" name="jPanel12">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                      </Properties>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel8" min="-2" pref="331" max="-2" attributes="0"/>
+                                          <Component id="jTextField3" max="32767" attributes="0"/>
+                                          <Component id="jTextField2" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="jComboBox3" alignment="0" pref="402" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <EmptySpace pref="50" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="jComboBox3" min="-2" pref="36" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="jTextField1" min="-2" pref="36" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="jTextField2" min="-2" pref="38" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jTextField3" min="-2" pref="274" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="javax.swing.JLabel" name="jLabel3">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="16" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Apply for Leave"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel5">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Leave Type"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JComboBox" name="jComboBox3">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="14" style="0"/>
+                            </Property>
+                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                              <StringArray count="4">
+                                <StringItem index="0" value="Select Leave Type"/>
+                                <StringItem index="1" value="Sick Leave"/>
+                                <StringItem index="2" value="Vacation Leave"/>
+                                <StringItem index="3" value="Maternity Leave"/>
+                              </StringArray>
+                            </Property>
+                          </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel7">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Leave Subject"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JTextField" name="jTextField1">
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel8">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Leave Dates (MM/DD/YYYY)"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JTextField" name="jTextField2">
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel9">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="12" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="You can select multiple dates separated by comma."/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel10">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Reason"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JTextField" name="jTextField3">
+                        </Component>
+                        <Component class="javax.swing.JButton" name="jButton3">
+                          <Properties>
+                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="ff" green="33" red="33" type="rgb"/>
+                            </Property>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Apply for Leave"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Component class="javax.swing.JLabel" name="jLabel29">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Century Gothic" size="36" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Leave request"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="jPanel2">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                      </Properties>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="32767" attributes="0"/>
+                                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="1" attributes="0">
+                                                  <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                      </Group>
+                                      <Component id="jScrollPane2" alignment="0" min="-2" pref="803" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="51" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                                  <Component id="jScrollPane2" min="-2" pref="459" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="javax.swing.JLabel" name="jLabel11">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="16" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Status"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel12">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Total Leave"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel13">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Total Leave Taken"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel14">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="1"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Total Leave Available"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel15">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="25"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel16">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="3"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel18">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Century Gothic" size="18" style="0"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="22"/>
+                          </Properties>
+                        </Component>
+                        <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTable" name="jTable2">
+                              <Properties>
+                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                  <Table columnCount="6" rowCount="22">
+                                    <Column editable="true" title="#" type="java.lang.Object"/>
+                                    <Column editable="true" title="Subject" type="java.lang.Object"/>
+                                    <Column editable="true" title="Type" type="java.lang.Object"/>
+                                    <Column editable="true" title="Date" type="java.lang.Object"/>
+                                    <Column editable="true" title="Reason" type="java.lang.Object"/>
+                                    <Column editable="true" title="Status" type="java.lang.Object"/>
+                                  </Table>
+                                </Property>
                                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                                   <TableColumnModel selectionModel="0">
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
                                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                                       <Title/>
                                       <Editor/>
@@ -1509,259 +2150,6 @@
                             </Component>
                           </SubComponents>
                         </Container>
-                        <Component class="javax.swing.JLabel" name="dateRangeLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Date Range"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JComboBox" name="monthDropdown">
-                          <Properties>
-                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                              <StringArray count="4">
-                                <StringItem index="0" value="Item 1"/>
-                                <StringItem index="1" value="Item 2"/>
-                                <StringItem index="2" value="Item 3"/>
-                                <StringItem index="3" value="Item 4"/>
-                              </StringArray>
-                            </Property>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JComboBox" name="yearDropdown">
-                          <Properties>
-                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                              <StringArray count="4">
-                                <StringItem index="0" value="Item 1"/>
-                                <StringItem index="1" value="Item 2"/>
-                                <StringItem index="2" value="Item 3"/>
-                                <StringItem index="3" value="Item 4"/>
-                              </StringArray>
-                            </Property>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="salaryDetailsPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Salary Details"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="totalHoursPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Total Hours Worked:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="hourlyRatePayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Hourly Rate:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="basicSalaryPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Basic Salary:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="allowPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Allowances"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="ricePayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Rice Subsidy:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="phonePayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Phone Allowance:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="clothingPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Clothing Allowance:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="totalAllowPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Total Allowance:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="deductionsPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Deductions"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="sssContriPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="SSS Contribution:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="philhealthContriPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Philhealth Contribution:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="pagibigContriPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="PAG-IBIG Contribution:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="taxPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Withholding tax:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="netPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Net Pay:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="grossSalaryPayLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Gross Salary:"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="totalHoursPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel8"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="hourlyRatePayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel9"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="basicSalaryPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel10"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="grossSalaryPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel11"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="phonePayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel12"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="clothingPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel13"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="totalAllowPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel14"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="ricePayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel15"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="sssContriPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel16"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="philhealthContriPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel18"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="pagibigContriPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel19"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="taxPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel22"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="netPayLabelValue">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="jLabel23"/>
-                          </Properties>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                  </SubComponents>
-                </Container>
-                <Container class="javax.swing.JPanel" name="leaveRequest">
-                  <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="e5" green="e5" red="e5" type="rgb"/>
-                    </Property>
-                  </Properties>
-                  <Constraints>
-                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-                      <CardConstraints cardName="card6"/>
-                    </Constraint>
-                  </Constraints>
-
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                              <Component id="jPanel12" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="291" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                              <Component id="jPanel12" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                  </Layout>
-                  <SubComponents>
-                    <Container class="javax.swing.JPanel" name="jPanel12">
-                      <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                        </Property>
-                      </Properties>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-                                  <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="47" pref="679" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                                  <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="529" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JLabel" name="jLabel29">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Century Gothic" size="36" style="1"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Leave request"/>
-                          </Properties>
-                        </Component>
                       </SubComponents>
                     </Container>
                   </SubComponents>
