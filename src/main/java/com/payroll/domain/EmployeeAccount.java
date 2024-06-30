@@ -15,6 +15,16 @@ public class EmployeeAccount {
     private String empPassword;
     private EmployeeDetails empDetails;
     private UserRole userRole;
+    private LeaveDetails leaveDetail;
+
+    public LeaveDetails getLeaveDetail() {
+        return leaveDetail;
+    }
+
+    public void setLeaveDetail(LeaveDetails leaveDetail) {
+        this.leaveDetail = leaveDetail;
+    }
+    
 
     public UserRole getUserRole() {
         return userRole;
@@ -62,4 +72,6 @@ public class EmployeeAccount {
     public void setEmpDetails(EmployeeDetails empDetails) {
         this.empDetails = empDetails;
     }
+    
+    
 }

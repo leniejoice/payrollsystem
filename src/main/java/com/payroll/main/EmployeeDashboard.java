@@ -10,31 +10,25 @@ import com.payroll.domain.EmployeeDetails;
 import com.payroll.domain.EmployeeHours;
 import com.payroll.domain.EmployeePosition;
 import com.payroll.domain.EmployeeStatus;
+import com.payroll.domain.LeaveDetails;
+import com.payroll.domain.LeaveType;
 import com.payroll.services.EmployeeDetailsService;
 import com.payroll.services.EmployeeAccountService;
+import com.payroll.services.LeaveService;
 import com.payroll.services.PayrollService;
 import com.payroll.util.DatabaseConnection;
 import com.payroll.util.PayrollUtils;
 import java.awt.CardLayout;
-import java.awt.Color;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import scala.Int;
 
 /**
  *
@@ -49,6 +43,8 @@ public class EmployeeDashboard extends javax.swing.JFrame {
     private EmployeeAccountService empAccountService;
     private EmployeeDetailsService empDetailsService;  // 
     private PayrollService payrollService;
+    private LeaveService leaveService;
+    private LeaveDetails leaveDetails;
     
     
     public EmployeeDashboard(EmployeeAccount empAccount) {
@@ -60,8 +56,10 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         this.empAccountService = new EmployeeAccountService(this.dbConnection);
         this.empDetailsService = new EmployeeDetailsService(this.dbConnection); 
         this.payrollService = new PayrollService(this.dbConnection);
+        this.leaveService = new LeaveService(this.dbConnection);
         loadAllYears();
         loadAllMonths();
+        loadAllLeaveTypes();
     }
     public EmployeeDashboard(){
         
@@ -307,11 +305,13 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         leaveSubjectLabel = new javax.swing.JLabel();
         leaveSubjectTFieldValue = new javax.swing.JTextField();
         leaveDatesLabel = new javax.swing.JLabel();
-        leaveDateTFieldValue = new javax.swing.JTextField();
-        insLabel = new javax.swing.JLabel();
+        leaveDateFromTFieldValue = new javax.swing.JTextField();
+        leaveDateFromLabel = new javax.swing.JLabel();
         reasonLabel = new javax.swing.JLabel();
         reasonTFieldValue = new javax.swing.JTextField();
         applyLeaveButton = new javax.swing.JButton();
+        leaveDateToLabel = new javax.swing.JLabel();
+        leaveDateToTFieldValue = new javax.swing.JTextField();
         leaveRequestLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         statusLabell = new javax.swing.JLabel();
@@ -322,8 +322,9 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         totalLeaveTakenLabelValue = new javax.swing.JLabel();
         totalLeaveBalLabelValue = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        leaveTable = new javax.swing.JTable();
         leaveHistoryLabel = new javax.swing.JLabel();
+        withdrawLeaveButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -1425,7 +1426,6 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         leaveTypeLabel.setText("Leave Type");
 
         leaveTypeDropdown.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
-        leaveTypeDropdown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Leave Type", "Sick Leave", "Vacation Leave", "Maternity Leave" }));
 
         leaveSubjectLabel.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
         leaveSubjectLabel.setText("Leave Subject");
@@ -1433,16 +1433,24 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         leaveDatesLabel.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
         leaveDatesLabel.setText("Leave Dates (MM/DD/YYYY)");
 
-        insLabel.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
-        insLabel.setText("You can select multiple dates separated by comma.");
+        leaveDateFromLabel.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
+        leaveDateFromLabel.setText("Date From");
 
         reasonLabel.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
         reasonLabel.setText("Reason");
 
         applyLeaveButton.setBackground(new java.awt.Color(51, 51, 255));
-        applyLeaveButton.setFont(new java.awt.Font("Century Gothic", 1, 16)); // NOI18N
+        applyLeaveButton.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         applyLeaveButton.setForeground(new java.awt.Color(255, 255, 255));
         applyLeaveButton.setText("Apply for Leave");
+        applyLeaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyLeaveButtonActionPerformed(evt);
+            }
+        });
+
+        leaveDateToLabel.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
+        leaveDateToLabel.setText("Date To");
 
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
@@ -1452,18 +1460,24 @@ public class EmployeeDashboard extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(applyLeaveButton)
-                    .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(reasonTFieldValue)
+                        .addComponent(leaveSubjectTFieldValue)
+                        .addComponent(leaveTypeDropdown, 0, 402, Short.MAX_VALUE)
                         .addComponent(reasonLabel)
-                        .addComponent(insLabel)
                         .addComponent(leaveSubjectLabel)
                         .addComponent(leaveTypeLabel)
                         .addComponent(applyLabel)
                         .addComponent(leaveDatesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(reasonTFieldValue)
-                        .addComponent(leaveDateTFieldValue)
-                        .addComponent(leaveSubjectTFieldValue)
-                        .addComponent(leaveTypeDropdown, 0, 402, Short.MAX_VALUE)))
-                .addContainerGap(50, Short.MAX_VALUE))
+                        .addGroup(jPanel12Layout.createSequentialGroup()
+                            .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(leaveDateFromLabel)
+                                .addComponent(leaveDateFromTFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(42, 42, 42)
+                            .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(leaveDateToLabel)
+                                .addComponent(leaveDateToTFieldValue)))))
+                .addGap(50, 50, 50))
         );
         jPanel12Layout.setVerticalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1480,17 +1494,21 @@ public class EmployeeDashboard extends javax.swing.JFrame {
                 .addComponent(leaveSubjectTFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(leaveDatesLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(leaveDateTFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(insLabel)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(leaveDateFromLabel)
+                    .addComponent(leaveDateToLabel))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(leaveDateToTFieldValue)
+                    .addComponent(leaveDateFromTFieldValue, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(reasonLabel)
-                .addGap(18, 18, 18)
-                .addComponent(reasonTFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(reasonTFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
                 .addComponent(applyLeaveButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         leaveRequestLabel.setFont(new java.awt.Font("Century Gothic", 1, 36)); // NOI18N
@@ -1519,39 +1537,49 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         totalLeaveBalLabelValue.setFont(new java.awt.Font("Century Gothic", 0, 18)); // NOI18N
         totalLeaveBalLabelValue.setText("22");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        leaveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "#", "Subject", "Type", "Date From", "Date To", "Total Days", "Reason", "Status", "Supervisor"
+                "#", "Subject", "Type", "Date From", "Date To", "Total Days", "Reason", "Status"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(leaveTable);
 
         leaveHistoryLabel.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
         leaveHistoryLabel.setText("Leave History");
+
+        withdrawLeaveButton.setBackground(new java.awt.Color(255, 102, 0));
+        withdrawLeaveButton.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        withdrawLeaveButton.setForeground(new java.awt.Color(255, 255, 255));
+        withdrawLeaveButton.setText("Withdraw Leave");
+        withdrawLeaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                withdrawLeaveButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1559,23 +1587,25 @@ public class EmployeeDashboard extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(leaveHistoryLabel)
-                    .addComponent(statusLabell)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(totalLeaveBalLabel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(totalLeaveBalLabelValue))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(totalLeaveLabel)
-                                .addComponent(totalLeaveTakenLabel))
-                            .addGap(85, 85, 85)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(totalLeaveLabelValue)
-                                .addComponent(totalLeaveTakenLabelValue))))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(withdrawLeaveButton)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(leaveHistoryLabel)
+                        .addComponent(statusLabell)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(totalLeaveBalLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(totalLeaveBalLabelValue))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(totalLeaveLabel)
+                                    .addComponent(totalLeaveTakenLabel))
+                                .addGap(85, 85, 85)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(totalLeaveLabelValue)
+                                    .addComponent(totalLeaveTakenLabelValue))))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(43, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -1599,7 +1629,9 @@ public class EmployeeDashboard extends javax.swing.JFrame {
                 .addComponent(leaveHistoryLabel)
                 .addGap(27, 27, 27)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(withdrawLeaveButton)
+                .addGap(13, 13, 13))
         );
 
         javax.swing.GroupLayout leaveRequestLayout = new javax.swing.GroupLayout(leaveRequest);
@@ -1671,6 +1703,7 @@ public class EmployeeDashboard extends javax.swing.JFrame {
 
     private void leaveManagementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_leaveManagementButtonActionPerformed
     cardLayout.show(mphCards, "card6"); 
+    refreshLeaveHistoryTable();
     }//GEN-LAST:event_leaveManagementButtonActionPerformed
 
     private void payrollButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payrollButtonActionPerformed
@@ -1792,8 +1825,14 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         });
     }
     
+    private void loadAllLeaveTypes(){
+        List<LeaveType> leaveTypes = leaveService.getAllLeaveTypes();
+        leaveTypeDropdown.addItem(new ComboItem(null,"Select Leave Type"));
+        for(LeaveType empLeaveType : leaveTypes){
+            leaveTypeDropdown.addItem(new ComboItem(empLeaveType.getId(),empLeaveType.getLeaveType()));
+        }
+    }     
                                         
-                                       
     
     
     private List<EmployeeHours> getEmployeeHours(int month, int year){
@@ -1825,6 +1864,91 @@ public class EmployeeDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchButton1ActionPerformed
 
+    private LeaveDetails updateLeaveDetailValues(){
+        
+    String subject = leaveSubjectTFieldValue.getText().trim() !=null ? leaveSubjectTFieldValue.getText() : "";
+    String reason= reasonTFieldValue.getText().trim()!=null ?  reasonTFieldValue.getText().trim() : "";
+    
+    
+    LeaveDetails leaveDetails = new LeaveDetails();
+    leaveDetails.setSubject(subject);
+    leaveDetails.setReason(reason);
+        try{
+            java.util.Date dateFrom = new SimpleDateFormat("yyyy-MM-dd").parse(leaveDateFromTFieldValue.getText().trim());
+            java.util.Date dateTo = new SimpleDateFormat("yyyy-MM-dd").parse(leaveDateToTFieldValue.getText().trim());
+            java.sql.Date dateFromSql = new  java.sql.Date(dateFrom.getTime());
+            java.sql.Date dateToSql = new  java.sql.Date(dateTo.getTime());
+            leaveDetails.setDateFrom(dateFromSql);
+            leaveDetails.setDateTo(dateToSql);
+
+        }catch(ParseException ex){
+
+        }
+        ComboItem leaveTypeValue = (ComboItem) leaveTypeDropdown.getSelectedItem();
+
+        if(leaveTypeValue.getKey() != null){
+             leaveDetails.setLeaveType(leaveService.getLeaveTypeById(leaveTypeValue.getKey()));
+        }
+        return leaveDetails;
+    }
+    
+    private void applyLeaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyLeaveButtonActionPerformed
+        LeaveDetails leaveDetails = updateLeaveDetailValues();
+        leaveService.saveLeave(leaveDetails);
+        JOptionPane.showMessageDialog(null, "Leave request sent!");
+        
+        clearLeaveTextFields();
+        refreshLeaveHistoryTable();
+
+    }//GEN-LAST:event_applyLeaveButtonActionPerformed
+    
+    private void withdrawLeaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withdrawLeaveButtonActionPerformed
+        DefaultTableModel model = (DefaultTableModel) leaveTable.getModel();
+        int selectedIndex = leaveTable.getSelectedRow();
+
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Please select which leave to withdraw.");
+            return;
+        }
+
+        int id = Integer.parseInt(model.getValueAt(selectedIndex, 0).toString());
+        int confirm = JOptionPane.showConfirmDialog(this, "Do you want to withdraw the selected leave request?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            leaveService.deleteLeaveRequest(id);
+            JOptionPane.showMessageDialog(this, "Withdrawal successful");
+            
+            clearLeaveTextFields();
+            refreshLeaveHistoryTable();
+        }                  
+    }//GEN-LAST:event_withdrawLeaveButtonActionPerformed
+    
+    private void clearLeaveTextFields(){
+        leaveSubjectTFieldValue.setText("");
+        leaveDateFromTFieldValue.setText("");
+        leaveDateToTFieldValue.setText("");
+        reasonTFieldValue.setText("");
+        leaveTypeDropdown.setSelectedIndex(0);
+    
+    }
+    private void refreshLeaveHistoryTable(){
+         List<LeaveDetails> allLeaves =  leaveService.getAllLeaves();
+        DefaultTableModel model = (DefaultTableModel) leaveTable.getModel();
+        model.setRowCount(0);
+
+        for(LeaveDetails leaveDetails : allLeaves) {
+            Vector<Object> rowData = new Vector<>();
+            rowData.add(leaveDetails.getId());
+            rowData.add(leaveDetails.getSubject());
+            rowData.add(leaveDetails.getLeaveType());
+            rowData.add(leaveDetails.getDateFrom());
+            rowData.add(leaveDetails.getDateTo());
+            rowData.add(leaveDetails.getTotalDays());
+            rowData.add(leaveDetails. getReason());
+            rowData.add(leaveDetails. getStatus());
+            model.addRow(rowData);
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -1901,7 +2025,6 @@ public class EmployeeDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel hourlyRatePayLabelValue;
     private javax.swing.JLabel hourlyrateLabel;
     private javax.swing.JLabel hourlyrateLabelValue;
-    private javax.swing.JLabel insLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
@@ -1925,8 +2048,10 @@ public class EmployeeDashboard extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField leaveDateTFieldValue;
+    private javax.swing.JLabel leaveDateFromLabel;
+    private javax.swing.JTextField leaveDateFromTFieldValue;
+    private javax.swing.JLabel leaveDateToLabel;
+    private javax.swing.JTextField leaveDateToTFieldValue;
     private javax.swing.JLabel leaveDatesLabel;
     private javax.swing.JLabel leaveHistoryLabel;
     private javax.swing.JButton leaveManagementButton;
@@ -1934,7 +2059,8 @@ public class EmployeeDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel leaveRequestLabel;
     private javax.swing.JLabel leaveSubjectLabel;
     private javax.swing.JTextField leaveSubjectTFieldValue;
-    private javax.swing.JComboBox<String> leaveTypeDropdown;
+    private javax.swing.JTable leaveTable;
+    private javax.swing.JComboBox<ComboItem> leaveTypeDropdown;
     private javax.swing.JLabel leaveTypeLabel;
     private javax.swing.JButton logoutButton;
     private javax.swing.JComboBox<ComboItem> monthDropdown;
@@ -2010,6 +2136,7 @@ public class EmployeeDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel totalLeaveTakenLabel;
     private javax.swing.JLabel totalLeaveTakenLabelValue;
     private javax.swing.JLabel usernameLabel;
+    private javax.swing.JButton withdrawLeaveButton;
     private javax.swing.JComboBox<ComboItem> yearDropdown;
     // End of variables declaration//GEN-END:variables
 }
