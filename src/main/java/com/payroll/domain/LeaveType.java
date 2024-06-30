@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.payroll.services;
+package com.payroll.domain;
 
 /**
  *
- * @author Computer
+ * @author leniejoice
  */
-class resultSet {
+public class LeaveType {
     
 }

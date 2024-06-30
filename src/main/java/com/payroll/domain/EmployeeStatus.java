@@ -6,9 +6,12 @@ package com.payroll.domain;
 
 /**
  *
- * @author Computer
+ * @author leniejoice
  */
 public class EmployeeStatus {
+    
+    int id;
+    String status;
 
     public int getId() {
         return id;
@@ -25,7 +28,6 @@ public class EmployeeStatus {
     public void setStatus(String status) {
         this.status = status;
     }
-    int id;
-    String status;
+    
     
 }

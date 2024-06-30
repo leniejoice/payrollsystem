@@ -6,7 +6,7 @@ package com.payroll.domain;
 
 /**
  *
- * @author Computer
+ * @author leniejoice
  */
 public class EmployeeAccount {
     private int accountID;

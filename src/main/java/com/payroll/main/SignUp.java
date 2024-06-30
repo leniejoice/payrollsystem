@@ -6,26 +6,16 @@ package com.payroll.main;
 
 import com.payroll.domain.EmployeeAccount;
 import com.payroll.domain.EmployeeDetails;
-import javax.swing.JOptionPane;
-import com.payroll.main.MainDashboard;
 import com.payroll.services.EmployeeAccountService;
 import com.payroll.services.EmployeeDetailsService;
 import com.payroll.util.DatabaseConnection;
 import javax.swing.JOptionPane;
-import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import scala.Int;
+
 
 /**
  *
- * @author Computer
+ * @author leniejoice
  */
 public class SignUp extends javax.swing.JFrame {
     

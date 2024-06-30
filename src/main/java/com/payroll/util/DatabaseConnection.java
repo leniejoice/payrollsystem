@@ -3,13 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.payroll.util;
-import com.payroll.domain.EmployeeDetails;
-import com.payroll.main.MainDashboard;
-import com.payroll.services.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import com.payroll.domain.EmployeeHours;
 import java.sql.PreparedStatement;
 
 /**

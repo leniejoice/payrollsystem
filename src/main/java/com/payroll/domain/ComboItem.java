@@ -6,7 +6,7 @@ package com.payroll.domain;
 
 /**
  *
- * @author Computer
+ * @author leniejoice
  */
 public class ComboItem {
     private Integer key;

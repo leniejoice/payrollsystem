@@ -19,7 +19,7 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author Computer
+ * @author leniejoice
  */
 public class LogIn extends javax.swing.JFrame {
 

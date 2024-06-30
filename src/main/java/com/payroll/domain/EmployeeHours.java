@@ -63,5 +63,14 @@ public class EmployeeHours {
         this.id = id;
     }
     
+    public String getFormattedHoursWorked(){
+        long secondsDuration = getHoursWorked();
+        return String.format("%d:%02d", secondsDuration / 3600, (secondsDuration % 3600) / 60);
+    }
+    
+    public long getHoursWorked(){
+        return (Duration.between(timeIn, timeOut).minus(timeIn.equals(LocalTime.MIDNIGHT) ? Duration.ZERO: Duration.ofHours(1))).toSeconds();
+    }
+    
 }
 

@@ -3,10 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.payroll.util;
+import com.payroll.domain.EmployeeAccount;
+import com.payroll.domain.EmployeeDetails;
+import com.payroll.domain.EmployeeHours;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -18,52 +19,17 @@ public class PayrollUtils {
         this.connection = dbConnection.getConnection();  
     }
     
-    public float  calculateSssContribution(int empID) {
-    String employeeSalaryQuery = """
-            select basic_salary from employee
-            where "employee_id" = ?;
-            """;
-    String sssContributionQuery = """
-            select contribution from sss
-            where (cr_above is null or ? > cr_above)
-            and (cr_below is null or ? < cr_below)  
-            """;
-     float contribution = 0f;
-
-     try {
-        // Retrieve employee basic salary
-        try (PreparedStatement employeeSalaryStatement = connection.prepareStatement(employeeSalaryQuery)) {
-            employeeSalaryStatement.setInt(1, empID);
-            try (ResultSet employeeSalaryResult = employeeSalaryStatement.executeQuery()) {
-                if (!employeeSalaryResult.next()) return 0f;
-                double employeeSalary = employeeSalaryResult.getDouble("basic_salary");
-
-                // Calculate SSS contribution based on the salary
-                try (PreparedStatement sssContributionStatement = connection.prepareStatement(sssContributionQuery)) {
-                    sssContributionStatement.setDouble(1, employeeSalary);
-                    sssContributionStatement.setDouble(2, employeeSalary);
-                    try (ResultSet sssContributionResult = sssContributionStatement.executeQuery()) {
-                        if (!sssContributionResult.next()) return 0f;
-                        contribution = sssContributionResult.getFloat("contribution");
-                    }
-                }
-            }
-        }
-    } catch (SQLException e) {
-        System.err.println("An error occurred: " + e.getMessage());
-        // Proper error handling should be done here
-    }
-           return contribution;
-} 
      public static double calculatePhilHealthContribution(double empSalary)  {
+        double contribution = empSalary * 0.015;
+        contribution = Math.round(contribution * 100) / 100.0;
         if (empSalary <= 10000) {
-            return empSalary * 0.030;
+            return empSalary * 0.015;
         } else if (empSalary <= 59999.99) {
-            return empSalary * 0.030;
+            return empSalary * 0.015;
         } else if (empSalary == 60000) {
-            return empSalary * 0.030;
+            return empSalary * 0.015;
         }
-        return (empSalary * 0.030);
+        return contribution;
     }
     
      public static double calculatePagibigContribution(double empSalary)  {
@@ -79,7 +45,7 @@ public class PayrollUtils {
         return Math.min(pagibig, maxPagibig);
     }
 
-     public double calculateWithholdingTax(double taxableIncome) {
+     public static double calculateWithholdingTax(double taxableIncome) {
         double tax;
         if (taxableIncome <= 20832) {
             tax = 0;
@@ -96,5 +62,59 @@ public class PayrollUtils {
         }
         return tax;
     }
-
+     
+    public static double getTotalAllowance(EmployeeDetails empDetails){
+        double total = 0;  
+        if (empDetails != null) {
+            total += empDetails.getEmpRice();    
+            total += empDetails.getEmpPhone();      
+            total += empDetails.getEmpClothing();   
+        }
+        return total;  
+     }
+    
+    public static double getTotalHoursWorked(List<EmployeeHours> empHours){
+        double totalHoursWorked = 0;
+        for (EmployeeHours employeeHours: empHours){
+            totalHoursWorked += employeeHours.getHoursWorked();
+        }
+        //return String.format("%d:%02d", totalHoursWorked / 3600, (totalHoursWorked % 3600) / 60);
+        return totalHoursWorked/3600;
+    }
+    
+     public static String getFormattedTotalHoursWorked(List<EmployeeHours> empHours){
+        long totalHoursWorked = 0;
+        for (EmployeeHours employeeHours: empHours){
+            totalHoursWorked += employeeHours.getHoursWorked();
+        }
+        return String.format("%d:%02d", totalHoursWorked / 3600, (totalHoursWorked % 3600) / 60);
+    }
+     
+    public static double getBasicSalary(List<EmployeeHours> empHours,EmployeeAccount empAccount){
+        double totalHoursWorked = PayrollUtils.getTotalHoursWorked(empHours);
+        double hourlyRate = empAccount.getEmpDetails().getEmpHourlyRate();
+        return totalHoursWorked * hourlyRate;
+    }
+    
+    public static double getGrossSalary(List<EmployeeHours> empHours,EmployeeAccount empAccount){
+        double basicSalary = getBasicSalary(empHours, empAccount);
+        return basicSalary + getTotalAllowance(empAccount.getEmpDetails());
+                
+    }
+    
+    public static double getTotalDeductions(double empSalary, double sssContri){
+        double philhealthContri = calculatePhilHealthContribution(empSalary);
+        double pagibigContri = calculatePagibigContribution(empSalary);
+        return philhealthContri + sssContri + pagibigContri;
+    }
+    
+    public static double getTaxableIncome(double empSalary, double sssContri){
+        double totalDeductions = getTotalDeductions(empSalary, sssContri);
+        return empSalary - totalDeductions;
+    }
+    
+    public static double getNetPay(double empSalary,double sssContri){
+       double netPay = getTaxableIncome(empSalary, sssContri) - calculateWithholdingTax(empSalary);
+       return netPay;
+    }
 }   

@@ -13,16 +13,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @leniejoice
+ * @author leniejoice
  */
 public class EmployeeAccountService {
     private Connection connection;
@@ -65,6 +61,7 @@ public class EmployeeAccountService {
                     int empID = resultSet.getInt("employee_id");
                     EmployeeDetails employeeDetails = empDetailsService.getByEmpID(empID);
                     employeeAccount.setEmpDetails(employeeDetails);
+                    employeeAccount.setEmpID(empID);
                     
                 }
                  
@@ -201,10 +198,22 @@ public class EmployeeAccountService {
         }                              
     }   
        
-       
-    public EmployeeAccount changePassword(EmployeeAccount empAccount){
-     
-        return null;
+    
+    public void changePassword(EmployeeAccount empAccount){
+        if(connection !=null){
+            String Query = "UPDATE public.employee_account SET password = ? where employee_id = ?";
+        
+            try{
+                PreparedStatement preparedStatement = connection.prepareStatement(Query);
+                preparedStatement.setString(1,empAccount.getEmpPassword());
+                preparedStatement.setInt(2,empAccount.getEmpID());
+
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }                                   
+        }
     }
    
 }
